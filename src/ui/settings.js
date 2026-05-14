@@ -27,6 +27,31 @@ async function _render() {
     <section class="settings">
       <h1 class="settings__title">Settings</h1>
 
+      <!-- Unit Logo -->
+      <div class="settings__section">
+        <h2 class="settings__section-title">Unit Logo</h2>
+        <p class="settings__desc">
+          Upload a unit crest or logo to replace the default anchor icon in the header and sign-in screen.
+          PNG or JPEG, recommended size 128×128 px or larger square image.
+        </p>
+        <div class="logo-upload">
+          <div class="logo-upload__preview">
+            ${s.unitLogo
+              ? `<img src="${esc(s.unitLogo)}" alt="Current logo" class="logo-upload__img">`
+              : `<div class="logo-upload__placeholder">⚓</div>`
+            }
+          </div>
+          <div class="logo-upload__controls">
+            <button type="button" class="btn btn--ghost" data-action="upload-logo">
+              ${s.unitLogo ? 'Replace Logo' : 'Upload Logo'}
+            </button>
+            ${s.unitLogo ? `<button type="button" class="btn btn--ghost btn--danger-outline" data-action="remove-logo">Remove</button>` : ''}
+            <input type="file" id="logo-file-input" accept="image/png,image/jpeg,image/gif,image/svg+xml" style="display:none" aria-hidden="true">
+            <p class="settings__desc" style="margin:8px 0 0">Max 2 MB. Stored locally and synced with your data backup.</p>
+          </div>
+        </div>
+      </div>
+
       <!-- Unit / Organisation -->
       <div class="settings__section">
         <h2 class="settings__section-title">Unit Information</h2>
@@ -197,6 +222,29 @@ function _syncStatusHtml(sync) {
 function _wireEvents() {
   if (!_root) return;
 
+  // Logo upload
+  const logoInput = _root.querySelector('#logo-file-input');
+  _root.querySelector('[data-action="upload-logo"]')?.addEventListener('click', () => logoInput?.click());
+  logoInput?.addEventListener('change', async () => {
+    const file = logoInput.files?.[0];
+    if (!file) return;
+    if (file.size > 2 * 1024 * 1024) { showToast('Logo must be under 2 MB.', 'warn'); return; }
+    const dataUrl = await _fileToDataUrl(file);
+    await Storage.settings.set('unitLogo', dataUrl);
+    await Storage.audit.append({ action: 'settings_update', user: AUTH.getSession()?.name || '', desc: 'Unit logo updated.' });
+    Sync.notifyChanged();
+    showToast('Logo saved.', 'success');
+    _render();
+  });
+
+  _root.querySelector('[data-action="remove-logo"]')?.addEventListener('click', async () => {
+    await Storage.settings.delete('unitLogo');
+    await Storage.audit.append({ action: 'settings_update', user: AUTH.getSession()?.name || '', desc: 'Unit logo removed.' });
+    Sync.notifyChanged();
+    showToast('Logo removed.', 'success');
+    _render();
+  });
+
   // Unit form
   _root.querySelector('[data-form="unit-form"]')?.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -337,4 +385,13 @@ function _wireEvents() {
 function _getRedirectUri() {
   const uri = window.location.origin + window.location.pathname;
   return uri.endsWith('/') ? uri.slice(0, -1) : uri;
+}
+
+function _fileToDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload  = () => resolve(r.result);
+    r.onerror = () => reject(r.error);
+    r.readAsDataURL(file);
+  });
 }

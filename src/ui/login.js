@@ -24,19 +24,24 @@ export async function mount(rootEl, { onLoggedIn } = {}) {
 
 async function _render() {
   const s = await Storage.settings.getAll();
-  const unitName  = s.unitName  || '145 ACU PSG';
-  const unitCode  = s.unitCode  || '';
+  const unitName   = s.unitName  || '145 ACU PSG';
+  const unitCode   = s.unitCode  || '';
+  const unitLogo   = s.unitLogo  || '';
   const configured = AUTH.isMsalConfigured();
+
+  const crestHtml = unitLogo
+    ? `<img src="${esc(unitLogo)}" alt="${esc(unitName)} logo" class="login__logo-img">`
+    : `<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+         <circle cx="32" cy="32" r="30" stroke="#c8962a" stroke-width="3" fill="#0e1a35"/>
+         <text x="32" y="40" text-anchor="middle" fill="#c8962a" font-size="22" font-family="serif" font-weight="bold">⚓</text>
+       </svg>`;
 
   render(_root, `
     <div class="login">
       <div class="login__card">
         <header class="login__header">
           <div class="login__crest" aria-hidden="true">
-            <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="32" cy="32" r="30" stroke="#c8962a" stroke-width="3" fill="#0e1a35"/>
-              <text x="32" y="40" text-anchor="middle" fill="#c8962a" font-size="22" font-family="serif" font-weight="bold">⚓</text>
-            </svg>
+            ${crestHtml}
           </div>
           <h1 class="login__title">${esc(unitName)}</h1>
           ${unitCode ? `<div class="login__subtitle">${esc(unitCode)}</div>` : ''}

@@ -567,6 +567,20 @@ textarea.form__input { resize: vertical; min-height: 80px; }
 .settings__data-action--danger strong { color: var(--c-error); }
 .settings__data-desc { font-size: 0.8rem; color: var(--c-text-muted); margin-top: 2px; }
 
+/* ---- Logo upload ---- */
+.logo-upload { display: flex; align-items: center; gap: 20px; }
+.logo-upload__preview {
+  flex-shrink: 0; width: 80px; height: 80px;
+  border-radius: var(--r-md); border: 1px solid var(--c-border);
+  background: var(--c-bg); display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+.logo-upload__img { width: 100%; height: 100%; object-fit: contain; }
+.logo-upload__placeholder { font-size: 2rem; color: var(--c-gold); }
+.logo-upload__controls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.shell__brand-logo { width: 36px; height: 36px; object-fit: contain; border-radius: 4px; }
+.login__logo-img { width: 64px; height: 64px; object-fit: contain; border-radius: 8px; }
+
 /* ---- Modal ---- */
 .modal {
   position: fixed; inset: 0; z-index: 1000;

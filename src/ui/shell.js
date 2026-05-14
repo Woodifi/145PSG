@@ -86,18 +86,23 @@ async function _renderShell() {
   const s        = await Storage.settings.getAll();
   const unitName = s.unitName || '145 ACU PSG';
   const unitCode = s.unitCode || '';
+  const unitLogo = s.unitLogo || '';
 
   _currentPage = DEFAULT_PAGE;
+
+  const crestHtml = unitLogo
+    ? `<img src="${esc(unitLogo)}" alt="${esc(unitName)} logo" class="shell__brand-logo">`
+    : `<svg width="36" height="36" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+         <circle cx="32" cy="32" r="30" stroke="#c8962a" stroke-width="3" fill="#0e1a35"/>
+         <text x="32" y="41" text-anchor="middle" fill="#c8962a" font-size="24" font-family="serif">⚓</text>
+       </svg>`;
 
   render(_root, `
     <div class="shell">
       <header class="shell__header">
         <div class="shell__brand">
           <div class="shell__brand-crest" aria-hidden="true">
-            <svg width="36" height="36" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="32" cy="32" r="30" stroke="#c8962a" stroke-width="3" fill="#0e1a35"/>
-              <text x="32" y="41" text-anchor="middle" fill="#c8962a" font-size="24" font-family="serif">⚓</text>
-            </svg>
+            ${crestHtml}
           </div>
           <div class="shell__brand-text">
             <div class="shell__brand-name">${esc(unitName)}</div>
