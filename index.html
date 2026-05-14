@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0e1a35">
+  <meta name="description" content="145 ACU PSG Expense Management System">
+  <title>145 ACU PSG — Expense System</title>
+  <link rel="stylesheet" href="expense.css">
+</head>
+<body>
+  <div id="app">
+    <noscript>
+      <div class="fatal">
+        <h1>JavaScript required</h1>
+        <p>This application requires JavaScript. Please enable it and reload.</p>
+      </div>
+    </noscript>
+  </div>
+
+  <!--
+    Import map: resolves bare module specifiers to CDN URLs.
+    MSAL Browser 2.38.3 is pinned to match QStore's tested version.
+    hash-wasm is not needed here (no PIN hashing; auth is via MSAL).
+    To update MSAL, change the version below and test thoroughly.
+  -->
+  <script type="importmap">
+    {
+      "imports": {
+        "@azure/msal-browser": "https://esm.sh/@azure/msal-browser@2.38.3"
+      }
+    }
+  </script>
+
+  <script type="module">
+    import { boot } from './src/ui/shell.js';
+    boot(document.getElementById('app'));
+  </script>
+</body>
+</html>
